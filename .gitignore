@@ -18,11 +18,5 @@ venv/
 dist/
 build/
 
-# 영상·대용량 데이터 (GitHub에 올리지 않는다)
-*.mp4
-*.h264
-*.mov
-recordings/
-
 # 개인 설정
 .claude/settings.local.json

@@ -6,6 +6,6 @@ if ! printf '%s' "$msg" | grep -Eq '^(feat|fix|docs|refactor|test|chore)(\([^)]+
   echo "커밋 메시지 형식이 맞지 않습니다: $msg"
   echo "형식: 종류: 한국어로 무엇을 했는지"
   echo "종류: feat, fix, docs, refactor, test, chore"
-  echo "예: feat: 카메라 미리보기 화면 추가"
+  echo "예: feat: 로그인 화면 추가"
   exit 1
 fi
