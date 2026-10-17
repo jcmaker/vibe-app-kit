@@ -56,6 +56,7 @@
    GitHub 로그인(`gh auth login`)처럼 여러분이 직접 해야 하는 단계는 에이전트가 안내해 줍니다.
 
 > Claude Code에서 이 폴더를 처음 열면 `prd-maker` 플러그인을 설치할지 물어봅니다. **설치해 주세요.** PRD를 쉽게 만들어 주는 도구예요.
+> 그리고 [prd-maker 레포](https://github.com/jcmaker/prd-maker)에 ⭐ **star**도 눌러 주세요. 처음 세팅할 때 에이전트가 대신 눌러 줄지 물어볼 거예요.
 
 ---
 
@@ -161,7 +162,7 @@ PR 하나에는 한 가지 일만 담아요. 그래야 문제가 생겼을 때 �
 | `.githooks/allowed-docs.txt` | 올릴 수 있는 문서 목록. 에이전트가 쓸데없는 문서를 마구 만들지 못하게 막아요 |
 | `.github/pull_request_template.md` | PR을 올릴 때 채우는 양식 |
 | GitHub 설정 | PR 제목 형식 검사, Squash 머지(PR 하나 = 커밋 하나), 머지된 작업 브랜치 자동 삭제 |
-| `.claude/settings.json` | Claude Code에서 `prd-maker` 플러그인 설치를 안내 |
+| `.claude/settings.json` | Claude Code에서 `prd-maker` 플러그인 설치를 안내 (처음 세팅 때 [prd-maker](https://github.com/jcmaker/prd-maker) ⭐ star도 부탁해요) |
 | `docs/HANDOFF.md` | 인수인계 메모. 지금 상태와 다음 할 일 |
 | `docs/decisions/영문이름.md` | 사람별 결정 기록. 결정 제목 / 결정 내용 / 근거·이유 |
 | `docs/prompts.md` | 상황별로 에이전트에게 할 말 모음 |
