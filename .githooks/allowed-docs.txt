@@ -7,6 +7,7 @@ GEMINI.md
 PRD.md
 docs/HANDOFF.md
 docs/prompts.md
+docs/decisions/*
 notes/*
 .github/*
 .claude/*
