@@ -1,52 +1,12 @@
 #!/bin/sh
 # 커밋 가드레일. 켜는 법: git config core.hooksPath .githooks
-# 막혔다면 우회(--no-verify)하지 말고 아래 안내대로 고친다.
 
-# 1. main에 직접 커밋 금지
 branch=$(git symbolic-ref --short HEAD 2>/dev/null)
-if [ "$branch" = "main" ]; then
-  echo "main 브랜치에는 직접 커밋할 수 없습니다."
-  echo "새 브랜치를 만들어 주세요. 예: git switch -c 영문이름/작업-요약"
-  exit 1
-fi
+case "$branch" in
+  main|dev)
+    echo "$branch 브랜치에는 직접 커밋할 수 없습니다."
+    echo "작업 브랜치를 만들어 주세요: git switch dev && git pull && git switch -c 영문이름/작업-요약"
+    exit 1 ;;
+esac
 
-staged=$(git diff --cached --name-only --diff-filter=ACMR)
-
-# 2. PRD.md가 없으면 문서·하네스 외의 파일(코드) 커밋 금지
-if [ ! -f PRD.md ]; then
-  for f in $staged; do
-    case "$f" in
-      *.md|.githooks/*|.github/*|.claude/*|.gitignore) ;;
-      *)
-        echo "PRD.md가 아직 없습니다. 코드보다 PRD를 먼저 만들어 주세요. (AGENTS.md 1절)"
-        echo "막힌 파일: $f"
-        exit 1 ;;
-    esac
-  done
-fi
-
-# 3. .env 같은 비밀 파일 커밋 금지
-for f in $staged; do
-  case "$f" in
-    .env|*/.env|.env.*|*/.env.*)
-      case "$f" in *.example) continue ;; esac
-      echo "비밀 정보 파일은 커밋할 수 없습니다: $f"
-      exit 1 ;;
-  esac
-done
-
-# 4. 허용 목록에 없는 .md 문서 금지 (문서가 무분별하게 늘어나는 것을 막는다)
-extra=""
-for f in $(git ls-files --cached --others --exclude-standard '*.md'); do
-  ok=""
-  while IFS= read -r pat; do
-    case "$pat" in ''|'#'*) continue ;; esac
-    case "$f" in $pat) ok=1; break ;; esac
-  done < .githooks/allowed-docs.txt
-  [ -z "$ok" ] && extra="$extra\n  - $f"
-done
-if [ -n "$extra" ]; then
-  printf "허용 목록에 없는 문서:%b\n" "$extra"
-  echo "기존 문서에 넣을 수는 없는지 먼저 생각해 보고, 정말 필요하면 사용자 승인 후 .githooks/allowed-docs.txt에 추가하세요."
-  exit 1
-fi
+exec sh scripts/guard.sh staged

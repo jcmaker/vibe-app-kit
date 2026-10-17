@@ -1,0 +1,11 @@
+#!/bin/sh
+# 푸시 가드레일. main·dev로 직접 푸시를 막고, 올라갈 변경을 한 번 더 검사한다.
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main|refs/heads/dev)
+      echo "${remote_ref#refs/heads/}에는 직접 푸시할 수 없습니다. 작업 브랜치를 푸시하고 PR을 올리세요."
+      exit 1 ;;
+  esac
+done
+git fetch -q origin dev 2>/dev/null
+exec sh scripts/guard.sh range origin/dev
