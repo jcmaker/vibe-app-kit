@@ -1,0 +1,28 @@
+# 비밀 정보
+.env
+.env.*
+!.env.example
+
+# 운영체제·편집기
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 의존성·빌드 결과
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+
+# 영상·대용량 데이터 (GitHub에 올리지 않는다)
+*.mp4
+*.h264
+*.mov
+recordings/
+
+# 개인 설정
+.claude/settings.local.json

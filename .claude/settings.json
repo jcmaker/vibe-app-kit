@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "prd-maker": {
+      "source": { "source": "github", "repo": "jcmaker/prd-maker" }
+    }
+  },
+  "enabledPlugins": {
+    "prd-maker@prd-maker": true
+  }
+}

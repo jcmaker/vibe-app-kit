@@ -1,0 +1,12 @@
+# 커밋할 수 있는 .md 문서 목록. * 는 그 아래 전부.
+# 새 문서는 사용자가 승인한 뒤에만 여기에 추가한다.
+README.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+PRD.md
+docs/HANDOFF.md
+docs/prompts.md
+notes/*
+.github/*
+.claude/*

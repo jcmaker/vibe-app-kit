@@ -1,0 +1,11 @@
+#!/bin/sh
+# 커밋 메시지 형식 검사: "종류: 무엇을 했는지" (AGENTS.md 3절)
+msg=$(head -n 1 "$1")
+case "$msg" in Merge*|Revert*) exit 0 ;; esac
+if ! printf '%s' "$msg" | grep -Eq '^(feat|fix|docs|refactor|test|chore)(\([^)]+\))?: .+'; then
+  echo "커밋 메시지 형식이 맞지 않습니다: $msg"
+  echo "형식: 종류: 한국어로 무엇을 했는지"
+  echo "종류: feat, fix, docs, refactor, test, chore"
+  echo "예: feat: 카메라 미리보기 화면 추가"
+  exit 1
+fi
