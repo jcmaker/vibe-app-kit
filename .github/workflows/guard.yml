@@ -3,6 +3,7 @@ name: guard
 on:
   pull_request:
     branches: [main, dev]
+    types: [opened, synchronize, reopened, edited]
 
 permissions:
   contents: read
@@ -15,6 +16,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: PR 제목 검사
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: sh scripts/guard.sh title "$PR_TITLE"
       - name: 가드 검사 (비밀 값·.env·큰 파일·PRD·문서·커밋 메시지)
         run: sh scripts/guard.sh range origin/${{ github.base_ref }}
 

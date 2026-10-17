@@ -13,6 +13,27 @@ errors=""
 fail() { errors="$errors
 - $1"; }
 
+# PR 제목 검사 (CI): sh scripts/guard.sh title "<PR 제목>"
+if [ "$mode" = "title" ]; then
+  t=$2
+  desc=$(printf '%s' "$t" | sed -E 's/^[a-z]+(\([^)]*\))?: //')
+  if ! printf '%s' "$t" | grep -Eq '^(feat|fix|docs|refactor|test|chore)\([^)]+\): .+$|^release: [0-9]{4}-[0-9]{2}-[0-9]{2} .+$'; then
+    echo "PR 제목 형식 오류: \"$t\""
+    echo "형식: 종류(이름): 한국어로 무엇을 했는지   예) feat(채현): 로그인 화면 추가"
+    echo "dev → main은: release: YYYY-MM-DD 요약"
+    exit 1
+  fi
+  hangul=$(printf '[\352-\355]')   # 한글 음절의 UTF-8 첫 바이트 (로케일 무관)
+  if ! printf '%s' "$desc" | LC_ALL=C grep -q "$hangul"; then
+    echo "PR 제목 설명이 한국어가 아닙니다: \"$desc\" — 무엇이 어떻게 바뀌는지 한국어로 써 주세요."
+    exit 1
+  fi
+  case "$desc" in 수정|작업|업데이트|변경|기타|테스트)
+    echo "PR 제목이 너무 모호합니다: \"$desc\" — 무엇을 수정했는지 구체적으로 써 주세요."; exit 1 ;;
+  esac
+  echo "PR 제목 통과: $t"; exit 0
+fi
+
 if [ "$mode" = "staged" ]; then
   files=$(git diff --cached --name-only --diff-filter=ACMR)
   content() { git show ":$1" 2>/dev/null; }
@@ -26,7 +47,7 @@ elif [ "$mode" = "range" ] && [ -n "$base" ]; then
   msgs=$(git log --no-merges --format=%s "$base"..HEAD)
   has_prd() { [ -f PRD.md ]; }
 else
-  echo "사용법: sh scripts/guard.sh staged | range <base>"; exit 2
+  echo "사용법: sh scripts/guard.sh staged | range <base> | title <PR 제목>"; exit 2
 fi
 
 # 비밀 값 패턴: 실제 키처럼 생긴 값만 잡는다.
