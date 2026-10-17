@@ -1,4 +1,4 @@
-# pi-vibe-kit
+# vibe-app-kit
 
 김채현, 최혜지, 최재혁, 채현수가 AI 에이전트와 함께 **애플리케이션**을 만드는 레포입니다.
 
@@ -19,7 +19,7 @@
 
 | 단어 | 비유 | 예시 |
 |---|---|---|
-| **레포 (repository)** | 프로젝트 폴더 하나 | 지금 보고 있는 `pi-vibe-kit`이 레포예요. |
+| **레포 (repository)** | 프로젝트 폴더 하나 | 지금 보고 있는 `vibe-app-kit`이 레포예요. |
 | **커밋 (commit)** | 메모 붙인 저장 시점 | `feat: 로그인 화면 추가` 라는 메모와 함께 지금 상태를 저장 |
 | **브랜치 (branch)** | 내 작업대 (복사본) | 채현이 `chaehyun/login-page` 작업대에서 로그인 화면을 만드는 동안, 혜지는 `hyeji/home-screen`에서 첫 화면을 만들어요. 서로 방해하지 않아요. |
 | **main** | 본판 | 모두가 합의한 최신 상태. 여기에 직접 고치지 않아요. |
@@ -48,7 +48,7 @@
 3. **AI 에이전트 설치하기** — Claude Code를 추천합니다. ([설치 안내](https://docs.claude.com/en/docs/claude-code/overview)) Cursor, Codex를 써도 됩니다. 어떤 에이전트든 이 레포의 `AGENTS.md`를 읽도록 되어 있어요.
 4. **에이전트에게 세팅 맡기기** — 작업할 폴더에서 에이전트를 열고 이렇게 말하세요.
    ```
-   https://github.com/jcmaker/pi-vibe-kit 레포를 내 컴퓨터에 받아 줘.
+   https://github.com/jcmaker/vibe-app-kit 레포를 내 컴퓨터에 받아 줘.
    받은 다음 AGENTS.md를 읽고 세션 시작 절차대로 세팅해 줘.
    git이나 GitHub 로그인처럼 내가 직접 해야 하는 게 있으면 하나씩 알려 줘.
    ```
