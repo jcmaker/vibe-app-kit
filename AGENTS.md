@@ -7,7 +7,22 @@ Claude Code, Cursor, Codex, Gemini 등 어떤 에이전트든 이 파일을 먼�
 ## 0. 세션을 시작할 때마다
 
 1. 작업 전에 이 파일 전체를 읽는다.
-2. `git config core.hooksPath`가 `.githooks`가 아니면 아래 명령을 먼저 실행한다. 커밋 가드레일이 이 설정으로 켜진다.
+2. 도구와 로그인을 확인한다. 하나라도 안 되어 있으면 다음 단계로 가지 말고, 사용자가 직접 해야 하는 일을 한 번에 하나씩 쉬운 말로 안내한다.
+   - `git --version`, `gh --version`이 되는지 (없으면 설치를 안내한다)
+   - `gh auth status`가 로그인 상태인지 (아니면 사용자에게 `gh auth login`을 안내한다)
+   - `gh api repos/jcmaker/vibe-app-kit --jq .permissions.push`가 `true`인지 (아니면 메일로 온 레포 초대를 수락해 달라고 하고, 그래도 안 되면 @jcmaker에게 아이디를 알려 달라고 한다)
+3. 지금 사용자가 누구인지 확인한다. `git config vibe.who`에 값이 있으면 그 사람으로 보고 "○○님으로 시작할게요"라고 한 줄 알린다. 값이 없으면 4명 중 누구인지 묻고(추측하지 않는다) 저장한다.
+   | 이름 | 영문이름 |
+   |---|---|
+   | 김채현 | `chaehyun` |
+   | 최혜지 | `hyeji` |
+   | 최재혁 | `jaehyuk` |
+   | 채현수 | `hyunsoo` |
+   ```bash
+   git config vibe.who hyeji   # 예: 최혜지
+   ```
+   이 영문이름을 브랜치 이름(`hyeji/...`), 결정 기록 파일(`docs/decisions/hyeji.md`)에 쓰고, PR 제목에는 한글 이름(`feat(혜지): ...`)을 쓴다.
+4. `git config core.hooksPath`가 `.githooks`가 아니면 아래 명령을 먼저 실행한다. 커밋 가드레일이 이 설정으로 켜진다.
    ```bash
    git config core.hooksPath .githooks
    ```
@@ -17,10 +32,10 @@ Claude Code, Cursor, Codex, Gemini 등 어떤 에이전트든 이 파일을 먼�
        gh api user/starred/jcmaker/$r >/dev/null 2>&1 && echo "$r: 이미 star 누름" || gh api -X PUT user/starred/jcmaker/$r
      done
      ```
-3. `git switch dev && git pull`로 `dev`의 최신 상태를 받는다.
-4. 내가 올린 PR 중 열려 있는 게 있으면(`gh pr list --author @me`) 3절 **PR을 올린 뒤**의 절차로 결과부터 확인한다.
-5. `docs/HANDOFF.md`를 읽고 지난 작업이 어디까지 왔는지 사용자에게 두세 줄로 알려 준다.
-6. **루트에 `PRD.md`가 없으면 (= 프로젝트의 첫 작업이면) 코드 작업을 하지 않는다.** 1절로 간다. `PRD.md`가 있으면 PRD 절차는 건너뛴다.
+5. `git switch dev && git pull`로 `dev`의 최신 상태를 받는다.
+6. 내가 올린 PR 중 열려 있는 게 있으면(`gh pr list --author @me`) 3절 **PR을 올린 뒤**의 절차로 결과부터 확인한다.
+7. `docs/HANDOFF.md`를 읽고 지난 작업이 어디까지 왔는지 사용자에게 두세 줄로 알려 준다.
+8. **루트에 `PRD.md`가 없으면 (= 프로젝트의 첫 작업이면) 코드 작업을 하지 않는다.** 1절로 간다. `PRD.md`가 있으면 PRD 절차는 건너뛴다.
 
 ## 1. 프로젝트 첫 작업은 PRD
 
@@ -134,23 +149,26 @@ PR을 만들었다고 끝이 아니다. 결과를 받기 전에는 "끝났다"�
    gh run list --branch "$(git branch --show-current)" --limit 1   # 실패한 실행 번호 확인
    gh run view <실행 번호> --log-failed
    ```
-4. **통과하면** 사용자에게 "검사는 통과했고, 이제 다른 사람의 확인을 기다린다"고 알린다.
-5. 리뷰어가 **변경 요청(반려)**을 남기면 내용을 읽고 사용자와 함께 고친 뒤, 같은 브랜치에 푸시하고 2번부터 다시 한다.
+4. **통과하면** 사용자에게 "검사는 통과했다"고 알리고, PR에 적힌 확인 방법대로 직접 확인했는지 묻는다. 사용자가 합치라고 하면 합친다. (`dev`로 가는 PR만. 승인 없이 합칠 수 있게 설정돼 있다.)
+   ```bash
+   gh pr merge --squash
+   ```
+5. 누가 PR에 **고쳐 달라는 코멘트**를 남기면 내용을 읽고 사용자와 함께 고친 뒤, 같은 브랜치에 푸시하고 2번부터 다시 한다.
    ```bash
    gh pr view --comments
    ```
 6. 같은 검사에서 3번 실패하면 멈추고, 지금까지 시도한 것과 막힌 이유를 사용자에게 보고한다.
-7. 에이전트는 스스로 머지하지 않는다. 머지되면 GitHub이 작업 브랜치를 자동으로 지운다. 내 컴퓨터에서도 정리한다.
+7. 사용자가 합치라고 하기 전에는 머지하지 않는다. 머지되면 GitHub이 작업 브랜치를 자동으로 지운다. 내 컴퓨터에서도 정리한다.
    ```bash
    git switch dev && git pull && git fetch --prune && git branch -D 작업-브랜치-이름
    ```
 
-리뷰는 몇 시간 걸릴 수 있다. 기다리는 동안 세션이 끝나면 `docs/HANDOFF.md`에 PR 번호를 적어 두고, 다음 세션은 0절 4번에서 결과부터 확인한다.
+PR을 합치지 않은 채 세션이 끝나면 `docs/HANDOFF.md`에 PR 번호를 적어 두고, 다음 세션은 0절 6번에서 결과부터 확인한다.
 
 **절대 하지 않는 것**
 - `git push --force`, `git reset --hard`, `git clean -fd`, `git rebase`처럼 기록을 지우거나 덮어쓰는 명령. 꼭 필요해 보이면 실행하지 말고 사용자에게 이유를 설명한 뒤 @jcmaker에게 도움을 요청하라고 안내한다.
 - `--no-verify`로 훅을 우회하는 것. 우회해도 CI가 다시 잡으므로 시간만 버린다.
-- `gh pr merge`, 관리자 권한(`--admin`)으로 브랜치 보호를 건너뛰는 것.
+- 사용자가 합치라고 하지 않았는데 `gh pr merge` 하는 것, `main`으로 머지하는 것, 관리자 권한(`--admin`)으로 브랜치 보호를 건너뛰는 것.
 - 비밀번호, API 키, `.env` 파일을 커밋하는 것.
 - 충돌(conflict)을 이해하지 못한 채 한쪽 내용을 지워서 해결하는 것. 양쪽이 무엇을 바꿨는지 사용자에게 설명하고 함께 정한다.
 
