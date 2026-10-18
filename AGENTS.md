@@ -7,7 +7,22 @@ Claude Code, Cursor, Codex, Gemini 등 어떤 에이전트든 이 파일을 먼�
 ## 0. 세션을 시작할 때마다
 
 1. 작업 전에 이 파일 전체를 읽는다.
-2. `git config core.hooksPath`가 `.githooks`가 아니면 아래 명령을 먼저 실행한다. 커밋 가드레일이 이 설정으로 켜진다.
+2. 도구와 로그인을 확인한다. 하나라도 안 되어 있으면 다음 단계로 가지 말고, 사용자가 직접 해야 하는 일을 한 번에 하나씩 쉬운 말로 안내한다.
+   - `git --version`, `gh --version`이 되는지 (없으면 설치를 안내한다)
+   - `gh auth status`가 로그인 상태인지 (아니면 사용자에게 `gh auth login`을 안내한다)
+   - `gh api repos/jcmaker/vibe-app-kit --jq .permissions.push`가 `true`인지 (아니면 메일로 온 레포 초대를 수락해 달라고 하고, 그래도 안 되면 @jcmaker에게 아이디를 알려 달라고 한다)
+3. 지금 사용자가 누구인지 확인한다. `git config vibe.who`에 값이 있으면 그 사람으로 보고 "○○님으로 시작할게요"라고 한 줄 알린다. 값이 없으면 4명 중 누구인지 묻고(추측하지 않는다) 저장한다.
+   | 이름 | 영문이름 |
+   |---|---|
+   | 김채현 | `chaehyun` |
+   | 최혜지 | `hyeji` |
+   | 최재혁 | `jaehyuk` |
+   | 채현수 | `hyunsoo` |
+   ```bash
+   git config vibe.who hyeji   # 예: 최혜지
+   ```
+   이 영문이름을 브랜치 이름(`hyeji/...`), 결정 기록 파일(`docs/decisions/hyeji.md`)에 쓰고, PR 제목에는 한글 이름(`feat(혜지): ...`)을 쓴다.
+4. `git config core.hooksPath`가 `.githooks`가 아니면 아래 명령을 먼저 실행한다. 커밋 가드레일이 이 설정으로 켜진다.
    ```bash
    git config core.hooksPath .githooks
    ```
@@ -17,10 +32,10 @@ Claude Code, Cursor, Codex, Gemini 등 어떤 에이전트든 이 파일을 먼�
        gh api user/starred/jcmaker/$r >/dev/null 2>&1 && echo "$r: 이미 star 누름" || gh api -X PUT user/starred/jcmaker/$r
      done
      ```
-3. `git switch dev && git pull`로 `dev`의 최신 상태를 받는다.
-4. 내가 올린 PR 중 열려 있는 게 있으면(`gh pr list --author @me`) 3절 **PR을 올린 뒤**의 절차로 결과부터 확인한다.
-5. `docs/HANDOFF.md`를 읽고 지난 작업이 어디까지 왔는지 사용자에게 두세 줄로 알려 준다.
-6. **루트에 `PRD.md`가 없으면 (= 프로젝트의 첫 작업이면) 코드 작업을 하지 않는다.** 1절로 간다. `PRD.md`가 있으면 PRD 절차는 건너뛴다.
+5. `git switch dev && git pull`로 `dev`의 최신 상태를 받는다.
+6. 내가 올린 PR 중 열려 있는 게 있으면(`gh pr list --author @me`) 3절 **PR을 올린 뒤**의 절차로 결과부터 확인한다.
+7. `docs/HANDOFF.md`를 읽고 지난 작업이 어디까지 왔는지 사용자에게 두세 줄로 알려 준다.
+8. **루트에 `PRD.md`가 없으면 (= 프로젝트의 첫 작업이면) 코드 작업을 하지 않는다.** 1절로 간다. `PRD.md`가 있으면 PRD 절차는 건너뛴다.
 
 ## 1. 프로젝트 첫 작업은 PRD
 
@@ -145,7 +160,7 @@ PR을 만들었다고 끝이 아니다. 결과를 받기 전에는 "끝났다"�
    git switch dev && git pull && git fetch --prune && git branch -D 작업-브랜치-이름
    ```
 
-리뷰는 몇 시간 걸릴 수 있다. 기다리는 동안 세션이 끝나면 `docs/HANDOFF.md`에 PR 번호를 적어 두고, 다음 세션은 0절 4번에서 결과부터 확인한다.
+리뷰는 몇 시간 걸릴 수 있다. 기다리는 동안 세션이 끝나면 `docs/HANDOFF.md`에 PR 번호를 적어 두고, 다음 세션은 0절 6번에서 결과부터 확인한다.
 
 **절대 하지 않는 것**
 - `git push --force`, `git reset --hard`, `git clean -fd`, `git rebase`처럼 기록을 지우거나 덮어쓰는 명령. 꼭 필요해 보이면 실행하지 말고 사용자에게 이유를 설명한 뒤 @jcmaker에게 도움을 요청하라고 안내한다.
